@@ -531,8 +531,8 @@ input[readonly] {
     .header-actions {
         width: 100%;
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
     }
 
     .history-panel {
@@ -543,8 +543,17 @@ input[readonly] {
     .btn {
         width: 100%;
         justify-content: center;
-        padding: 0.75rem 0.5rem;
-        font-size: 0.9rem;
+        padding: 0.75rem 0.25rem;
+        font-size: 0.85rem;
+        flex-direction: column;
+        /* Stack icon and text */
+        gap: 0.25rem;
+        height: 100%;
+    }
+
+    .btn .icon {
+        font-size: 1.25rem;
+        margin-bottom: 0.1rem;
     }
 
     /* Mobile Card View for Table */
@@ -571,7 +580,7 @@ input[readonly] {
         display: block;
         background: white;
         border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         border: 1px solid var(--border-color);
         margin-bottom: 1rem;
         padding: 1rem;
@@ -606,7 +615,8 @@ input[readonly] {
         text-align: right;
         border: 1px solid var(--border-color);
         background: #f8fafc;
-        width: 65%; /* Give space for label */
+        width: 65%;
+        /* Give space for label */
     }
 
     .items-table input[type="text"]:focus,
@@ -620,7 +630,7 @@ input[readonly] {
         align-items: flex-start;
         gap: 0.5rem;
     }
-    
+
     .items-table td[data-label="規格說明"]:before {
         margin-bottom: 0.25rem;
     }
