@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e40af">
+    <meta name="description" content="品盛冷氣行專業空調報價單管理系統">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="品盛報價">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>品盛冷氣行 - 報價單系統</title>
+    <link rel="stylesheet" href="style-v2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="company-info">
+                <h1>品盛冷氣行</h1>
+                <p>統一編號: 00550134</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="toggleHistory()">
+                    <span class="icon">📋</span> 歷史報價單
+                </button>
+                <button class="btn btn-secondary" onclick="exportData()">
+                    <span class="icon">💾</span> 匯出資料
+                </button>
+                <button class="btn btn-secondary" onclick="importData()">
+                    <span class="icon">📁</span> 匯入資料
+                </button>
+                <button class="btn btn-success" onclick="newQuotation()">
+                    <span class="icon">➕</span> 新增報價單
+                </button>
+            </div>
+        </header>
+
+        <!-- History Panel -->
+        <div id="historyPanel" class="history-panel">
+            <div class="panel-header">
+                <h3>歷史報價單</h3>
+                <button class="btn-close" onclick="toggleHistory()">✕</button>
+            </div>
+            <div class="panel-content">
+                <input type="text" id="searchHistory" class="search-input" placeholder="搜尋客戶名稱或報價單編號..."
+                    onkeyup="filterHistory()">
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Quotation Info -->
+            <div class="quotation-info">
+                <div class="info-row">
+                    <div class="info-field">
+                        <label>報價單編號</label>
+                        <input type="text" id="quotationNumber" readonly>
+                    </div>
+                    <div class="info-field">
+                        <label>報價日期</label>
+                        <input type="date" id="quotationDate">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div class="section">
+                <h2>客戶資訊</h2>
+                <div class="customer-grid">
+                    <div class="info-field">
+                        <label>客戶名稱 <span class="required">*</span></label>
+                        <input type="text" id="customerName" placeholder="請輸入客戶名稱">
+                    </div>
+                    <div class="info-field">
+                        <label>聯絡電話</label>
+                        <input type="tel" id="customerPhone" placeholder="請輸入聯絡電話">
+                    </div>
+                    <div class="info-field full-width">
+                        <label>安裝地址</label>
+                        <input type="text" id="customerAddress" placeholder="請輸入安裝地址">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>報價項目</h2>
+                    <button class="btn btn-primary" onclick="addItem()">
+                        <span class="icon">➕</span> 新增項目
+                    </button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">序號</th>
+                                <th style="width: 25%">品名</th>
+                                <th style="width: 25%">規格說明</th>
+                                <th style="width: 10%">數量</th>
+                                <th style="width: 12%">單價</th>
+                                <th style="width: 15%">金額</th>
+                                <th style="width: 8%" class="no-print">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <!-- Items will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Total Section -->
+            <div class="total-section">
+                <div class="total-row">
+                    <span class="total-label">小計：</span>
+                    <span class="total-value" id="subtotal">NT$ 0</span>
+                </div>
+                <div class="total-row">
+                    <span class="total-label">營業稅 (5%)：</span>
+                    <span class="total-value" id="tax">NT$ 0</span>
+                </div>
+                <div class="total-row total-final">
+                    <span class="total-label">總計：</span>
+                    <span class="total-value" id="grandTotal">NT$ 0</span>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="section">
+                <h2>備註</h2>
+                <textarea id="notes" rows="4" placeholder="其他說明事項..."></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons no-print">
+                <button class="btn btn-primary" onclick="saveQuotation()">
+                    <span class="icon">💾</span> 儲存報價單
+                </button>
+                <button class="btn btn-success" onclick="printQuotation()">
+                    <span class="icon">🖨️</span> 列印
+                </button>
+                <button class="btn btn-info" onclick="exportPDF()">
+                    <span class="icon">📄</span> 匯出 PDF
+                </button>
+                <button class="btn btn-danger" onclick="deleteQuotation()">
+                    <span class="icon">🗑️</span> 刪除
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <div style="text-align: center; font-size: 12px; color: #ccc; padding: 10px;">
+        Mobile Version: 2.2 (No Cache)
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
