@@ -525,6 +525,14 @@ input[readonly] {
     .header {
         flex-direction: column;
         text-align: center;
+        padding: 1rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
     }
 
     .history-panel {
@@ -532,21 +540,105 @@ input[readonly] {
         right: -100%;
     }
 
-    .action-buttons {
-        flex-direction: column;
-    }
-
     .btn {
         width: 100%;
         justify-content: center;
-    }
-
-    .table-wrapper {
+        padding: 0.75rem 0.5rem;
         font-size: 0.9rem;
     }
 
-    .items-table th,
+    /* Mobile Card View for Table */
+    .table-wrapper {
+        border: none;
+        overflow: visible;
+    }
+
+    .items-table {
+        display: block;
+        background: transparent;
+    }
+
+    .items-table thead {
+        display: none;
+    }
+
+    .items-table tbody {
+        display: block;
+        gap: 1rem;
+    }
+
+    .items-table tr {
+        display: block;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+
     .items-table td {
-        padding: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        text-align: right;
+    }
+
+    .items-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        justify-content: flex-end;
+    }
+
+    .items-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-right: 1rem;
+        white-space: nowrap;
+    }
+
+    .items-table input[type="text"],
+    .items-table input[type="number"] {
+        text-align: right;
+        border: 1px solid var(--border-color);
+        background: #f8fafc;
+        width: 65%; /* Give space for label */
+    }
+
+    .items-table input[type="text"]:focus,
+    .items-table input[type="number"]:focus {
+        background: white;
+    }
+
+    /* Specific adjustments for fields */
+    .items-table td[data-label="規格說明"] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .items-table td[data-label="規格說明"]:before {
+        margin-bottom: 0.25rem;
+    }
+
+    .items-table td[data-label="規格說明"] input {
+        width: 100%;
+        text-align: left;
+    }
+
+    .item-amount {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* Action buttons in stacked layout */
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
     }
 }

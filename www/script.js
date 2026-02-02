@@ -3,7 +3,7 @@ let currentQuotationId = null;
 let itemCount = 0;
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeNewQuotation();
     loadHistoryList();
 });
@@ -45,13 +45,13 @@ function addItem() {
     const tbody = document.getElementById('itemsTableBody');
     const row = tbody.insertRow();
     row.innerHTML = `
-        <td class="item-number">${itemCount}</td>
-        <td><input type="text" class="item-name" placeholder="空調設備名稱" oninput="calculateTotals()"></td>
-        <td><input type="text" class="item-spec" placeholder="規格型號" oninput="calculateTotals()"></td>
-        <td><input type="number" class="item-qty" value="1" min="0" step="1" oninput="calculateTotals()"></td>
-        <td><input type="number" class="item-price" value="0" min="0" step="1" oninput="calculateTotals()"></td>
-        <td class="item-amount">NT$ 0</td>
-        <td class="no-print">
+        <td class="item-number" data-label="序號">${itemCount}</td>
+        <td data-label="品名"><input type="text" class="item-name" placeholder="空調設備名稱" oninput="calculateTotals()"></td>
+        <td data-label="規格說明"><input type="text" class="item-spec" placeholder="規格型號" oninput="calculateTotals()"></td>
+        <td data-label="數量"><input type="number" class="item-qty" value="1" min="0" step="1" oninput="calculateTotals()"></td>
+        <td data-label="單價"><input type="number" class="item-price" value="0" min="0" step="1" oninput="calculateTotals()"></td>
+        <td class="item-amount" data-label="金額">NT$ 0</td>
+        <td class="no-print" data-label="操作">
             <button class="btn btn-danger btn-small" onclick="removeItem(this)">
                 <span class="icon">🗑️</span>
             </button>
@@ -106,7 +106,7 @@ function formatNumber(num) {
 // Save quotation
 function saveQuotation() {
     const customerName = document.getElementById('customerName').value.trim();
-    
+
     if (!customerName) {
         alert('請輸入客戶名稱！');
         document.getElementById('customerName').focus();
@@ -148,7 +148,7 @@ function saveQuotation() {
 
     // Save to localStorage
     let quotations = JSON.parse(localStorage.getItem('quotations') || '[]');
-    
+
     const existingIndex = quotations.findIndex(q => q.id === quotation.id);
     if (existingIndex >= 0) {
         quotations[existingIndex] = quotation;
@@ -167,7 +167,7 @@ function saveQuotation() {
 function loadQuotation(id) {
     const quotations = JSON.parse(localStorage.getItem('quotations') || '[]');
     const quotation = quotations.find(q => q.id === id);
-    
+
     if (!quotation) {
         alert('找不到該報價單！');
         return;
@@ -190,13 +190,13 @@ function loadQuotation(id) {
         itemCount++;
         const row = tbody.insertRow();
         row.innerHTML = `
-            <td class="item-number">${itemCount}</td>
-            <td><input type="text" class="item-name" value="${item.name}" placeholder="空調設備名稱" oninput="calculateTotals()"></td>
-            <td><input type="text" class="item-spec" value="${item.spec}" placeholder="規格型號" oninput="calculateTotals()"></td>
-            <td><input type="number" class="item-qty" value="${item.qty}" min="0" step="1" oninput="calculateTotals()"></td>
-            <td><input type="number" class="item-price" value="${item.price}" min="0" step="1" oninput="calculateTotals()"></td>
-            <td class="item-amount">NT$ 0</td>
-            <td class="no-print">
+            <td class="item-number" data-label="序號">${itemCount}</td>
+            <td data-label="品名"><input type="text" class="item-name" value="${item.name}" placeholder="空調設備名稱" oninput="calculateTotals()"></td>
+            <td data-label="規格說明"><input type="text" class="item-spec" value="${item.spec}" placeholder="規格型號" oninput="calculateTotals()"></td>
+            <td data-label="數量"><input type="number" class="item-qty" value="${item.qty}" min="0" step="1" oninput="calculateTotals()"></td>
+            <td data-label="單價"><input type="number" class="item-price" value="${item.price}" min="0" step="1" oninput="calculateTotals()"></td>
+            <td class="item-amount" data-label="金額">NT$ 0</td>
+            <td class="no-print" data-label="操作">
                 <button class="btn btn-danger btn-small" onclick="removeItem(this)">
                     <span class="icon">🗑️</span>
                 </button>
@@ -222,7 +222,7 @@ function deleteQuotation() {
     let quotations = JSON.parse(localStorage.getItem('quotations') || '[]');
     quotations = quotations.filter(q => q.id !== currentQuotationId);
     localStorage.setItem('quotations', JSON.stringify(quotations));
-    
+
     alert('報價單已刪除！');
     newQuotation();
     loadHistoryList();
@@ -253,7 +253,7 @@ function toggleHistory() {
 function loadHistoryList() {
     const quotations = JSON.parse(localStorage.getItem('quotations') || '[]');
     const historyList = document.getElementById('historyList');
-    
+
     if (quotations.length === 0) {
         historyList.innerHTML = '<p style="text-align: center; color: #64748b; padding: 2rem;">尚無歷史報價單</p>';
         return;
@@ -278,7 +278,7 @@ function loadHistoryList() {
 function filterHistory() {
     const searchTerm = document.getElementById('searchHistory').value.toLowerCase();
     const items = document.querySelectorAll('.history-item');
-    
+
     items.forEach(item => {
         const text = item.textContent.toLowerCase();
         if (text.includes(searchTerm)) {
@@ -301,7 +301,7 @@ function formatDate(dateString) {
 // Export to PDF
 async function exportPDF() {
     const customerName = document.getElementById('customerName').value.trim();
-    
+
     if (!customerName) {
         alert('請先輸入客戶名稱！');
         return;
@@ -309,14 +309,14 @@ async function exportPDF() {
 
     // Show loading message
     const originalContent = document.body.innerHTML;
-    
+
     try {
         // Get the jsPDF constructor
         const { jsPDF } = window.jspdf;
-        
+
         // Create new PDF document
         const pdf = new jsPDF('p', 'mm', 'a4');
-        
+
         // Use html2canvas to capture the main content
         const element = document.querySelector('.container');
         const canvas = await html2canvas(element, {
@@ -324,20 +324,20 @@ async function exportPDF() {
             useCORS: true,
             logging: false
         });
-        
+
         const imgData = canvas.toDataURL('image/png');
         const imgWidth = 210; // A4 width in mm
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
+
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        
+
         // Generate filename
         const quotationNumber = document.getElementById('quotationNumber').value;
         const filename = `品盛報價單_${customerName}_${quotationNumber}.pdf`;
-        
+
         // Save PDF
         pdf.save(filename);
-        
+
         alert('PDF 已成功匯出！');
     } catch (error) {
         console.error('PDF 匯出失敗:', error);
@@ -348,28 +348,28 @@ async function exportPDF() {
 // Export data to JSON file
 function exportData() {
     const quotations = localStorage.getItem('quotations');
-    
+
     if (!quotations || quotations === '[]') {
         alert('目前沒有任何報價資料可以匯出！');
         return;
     }
-    
+
     try {
         // Create JSON blob
         const blob = new Blob([quotations], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        
+
         // Create download link
         const a = document.createElement('a');
         a.href = url;
         a.download = `品盛報價資料_${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
-        
+
         // Cleanup
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         alert('資料已成功匯出！');
     } catch (error) {
         console.error('資料匯出失敗:', error);
@@ -382,40 +382,40 @@ function importData() {
     if (!confirm('匯入資料將會覆蓋現有的所有報價資料，確定要繼續嗎？')) {
         return;
     }
-    
+
     // Create file input
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json';
-    
-    input.onchange = function(e) {
+
+    input.onchange = function (e) {
         const file = e.target.files[0];
         if (!file) return;
-        
+
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             try {
                 const data = JSON.parse(event.target.result);
-                
+
                 // Validate data
                 if (!Array.isArray(data)) {
                     alert('檔案格式錯誤！請選擇正確的備份檔案。');
                     return;
                 }
-                
+
                 // Import data
                 localStorage.setItem('quotations', JSON.stringify(data));
                 loadHistoryList();
-                
+
                 alert(`成功匯入 ${data.length} 筆報價資料！`);
             } catch (error) {
                 console.error('資料匯入失敗:', error);
                 alert('資料匯入失敗！請確認檔案格式正確。');
             }
         };
-        
+
         reader.readAsText(file);
     };
-    
+
     input.click();
 }
