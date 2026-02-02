@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quotation-system-v2';
+const CACHE_NAME = 'quotation-system-v3';
 const urlsToCache = [
     './index.html',
     './style-v2.css',

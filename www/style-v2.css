@@ -517,7 +517,7 @@ input[readonly] {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .customer-grid {
         grid-template-columns: 1fr;
     }
@@ -568,7 +568,7 @@ input[readonly] {
     }
 
     .items-table thead {
-        display: none;
+        display: none !important;
     }
 
     .items-table tbody {
