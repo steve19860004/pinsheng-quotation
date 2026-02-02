@@ -1,7 +1,7 @@
-const CACHE_NAME = 'quotation-system-v1';
+const CACHE_NAME = 'quotation-system-v2';
 const urlsToCache = [
     './index.html',
-    './style.css',
+    './style-v2.css',
     './script.js',
     './manifest.json'
 ];
